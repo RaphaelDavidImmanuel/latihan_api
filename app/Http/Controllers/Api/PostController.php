@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use\App\Http\Resources\PostResource;
-use\Illuminate\Support\Facades\Storage;
+use App\Http\Resources\PostResource;
+use Illuminate\Support\Facades\Storage;
+
+
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
@@ -14,7 +16,7 @@ class PostController extends Controller
     public function index()
     {
         // get posts
-        $posts = Post::latest()->paginate(5);
+        $posts = Post::latest()->get();
 
         // return collection of posts as a resource
         return new PostResource(true, 'List Data Posts', $posts);
@@ -24,7 +26,7 @@ class PostController extends Controller
     {
         //define validation rules
         $validator = Validator::make($request->all(), [
-            'image'     => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'image'     => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'title'     => 'required',
             'content'   => 'required',
         ]);
@@ -35,12 +37,12 @@ class PostController extends Controller
         }
 
         //upload image
-        $image = $request->file('image');
-        $image->storeAs('public/posts', $image->hashName());
+        // $image = $request->file('image');
+        // $image->storeAs('public/posts', $image->hashName());
 
         //create post
         $post = Post::create([
-            'image'     => $image->hashName(),
+            // 'image'     => $image->hashName(),
             'title'     => $request->title,
             'content'   => $request->content,
         ]);
@@ -101,7 +103,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         //delete image
-        Storage::delete('public/posts/'.$post->image);
+        // Storage::delete('public/posts/'.$post->image);
 
         //delete post
         $post->delete();
